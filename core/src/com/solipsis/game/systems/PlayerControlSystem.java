@@ -18,7 +18,9 @@ public class PlayerControlSystem extends EntityProcessingSystem {
 
     protected ComponentMapper<Position> positionMapper;
 
-    public PlayerControlSystem() { super(Aspect.all(PlayerControlled.class, Position.class));}
+    public PlayerControlSystem() { super(Aspect.all(PlayerControlled.class, Position.class));
+        System.out.println("added control system");
+    }
 
     @Override
     protected void process(Entity e) {

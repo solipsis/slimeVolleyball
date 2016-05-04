@@ -16,7 +16,7 @@ public class AssetManager {
     }
 
     public AssetManager() {
-        slime = new Texture(Gdx.files.internal("slime.png"));
+        slime = new Texture(Gdx.files.internal("badlogic.jpg"));
     }
 
     public Texture get(SpriteFile sprite) {
