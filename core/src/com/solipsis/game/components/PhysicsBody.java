@@ -8,10 +8,10 @@ import com.badlogic.gdx.physics.box2d.*;
 /**
  * Created by dave on 5/4/16.
  */
-public class Box2dPhysics extends Component {
+public class PhysicsBody extends Component {
     Body body;
 
-    public Box2dPhysics(World world, Vector2 position) {
+    public PhysicsBody(World world, Vector2 position) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(position);
@@ -34,14 +34,20 @@ public class Box2dPhysics extends Component {
 
     }
 
-    public Box2dPhysics(World world, Vector2 position, String s) {
+    public PhysicsBody(World world, Vector2 position, String s) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.add(position);
         body = world.createBody(bodyDef);
 
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(10);
+        circleShape.setRadius(20);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = circleShape;
+        fixtureDef.density = 1;
+        fixtureDef.restitution = 0.8f;
+        Fixture fixture = body.createFixture(fixtureDef);
 
 
     }
