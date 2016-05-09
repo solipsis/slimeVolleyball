@@ -27,10 +27,12 @@ public class SlimeVolleyball extends ApplicationAdapter {
 	SpriteBatch batch;
 	World world;
 
-    OrthographicCamera b2dcam;
-    OrthographicCamera cam;
+	int WORLD_HEIGHT = 100;
+	int WORLD_WIDTH = 100;
 
-	private Camera camera;
+    public static float DEGTORAD  = 0.0174532925199432957f;
+
+	public static Camera camera;
 
     public static com.badlogic.gdx.physics.box2d.World boxWorld;
 
@@ -38,12 +40,16 @@ public class SlimeVolleyball extends ApplicationAdapter {
 	public void create () {
 
 
-		camera = new PerspectiveCamera();
+
 
         Box2D.init();
-        b2dcam = new OrthographicCamera(1000,1000);
-        cam = new OrthographicCamera();
-		boxWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0,-80), true);
+		boxWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0,-10), true);
+
+		float w = Gdx.graphics.getWidth();
+		float h = Gdx.graphics.getHeight();
+		camera = new OrthographicCamera(100, 100 * (h/w));
+        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
+		camera.update();
 
 
 		batch = new SpriteBatch();
@@ -64,36 +70,40 @@ public class SlimeVolleyball extends ApplicationAdapter {
 				.add(new SpriteReference(AssetManager.SpriteFile.SLIME));
 		*/
 
+        int slimeHeight = 10;
+        int slimeWidth = 10;
+
+
 		int ball = world.create();
 		world.edit(ball)
-				.add(new Position(100, 100))
-				.add(new PhysicsBody(boxWorld, new Vector2(100,500), "a"));
+				.add(new Position(50, 50))
+				.add(new PhysicsBody(boxWorld, new Vector2(50, 50), "a"));
 
 
 
 
 		int slime2 = world.create();
 		world.edit(slime2)
-				.add(new Position(0,0))
+				.add(new Position(50,20))
 				.add(new PlayerControlled())
-				.add(new PhysicsBody(boxWorld, new Vector2(0,300)))
-				.add(new Sprite())
+				.add(new PhysicsBody(boxWorld, new Vector2(50,30)))
+				.add(new Sprite(slimeWidth*2, slimeHeight*2))
 				.add(new SpriteReference(AssetManager.SpriteFile.SLIME));
 
 		BodyDef groundBodyDef =new BodyDef();
         // Set its world position3
-		groundBodyDef.position.set(new Vector2(10, 0));
+		groundBodyDef.position.set(new Vector2(50, 10));
 
         // Create a body from the defintion and add it to the world
 		Body groundBody = boxWorld.createBody(groundBodyDef);
 
         // Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-        // Set the polygon shape as a box which is twice the size of our view port and 20 high
+
         // (setAsBox takes half-width and half-height as arguments)
-		groundBox.setAsBox(500, 10.0f);
+		groundBox.setAsBox(25,3);
         // Create a fixture from our polygon shape and add it to our ground body
-		groundBody.createFixture(groundBox, 1.0f);
+		groundBody.createFixture(groundBox, 5);
         // Clean up after ourselves
 		groundBox.dispose();
 
@@ -105,9 +115,9 @@ public class SlimeVolleyball extends ApplicationAdapter {
 	@Override
 	public void render () {
 
-	//	debugMatrix=new Matrix4(b2dcam.combined);
 
 //BoxObjectManager.BOX_TO_WORLD = 100f
+	//	debugMatrix=new Matrix4(b2dcam.combined);
 //Scale it by 100 as our box physics bodies are scaled down by 100
 	//	debugMatrix.scale(1, 1, 1f);
 
@@ -124,7 +134,8 @@ public class SlimeVolleyball extends ApplicationAdapter {
 
 	@Override
 	public void resize(int width, int height) {
-	//	b2dcam = new OrthographicCamera(width/2, height/2);
-	//	viewport.update(width, height);
+		camera.viewportWidth = 100f;
+		camera.viewportHeight = 100f * height/width;
+		camera.update();
 	}
 }

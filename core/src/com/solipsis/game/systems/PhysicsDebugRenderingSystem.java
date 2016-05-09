@@ -21,14 +21,12 @@ public class PhysicsDebugRenderingSystem extends EntityProcessingSystem {
     Box2DDebugRenderer debugRenderer;
     World boxWorld;
     ComponentMapper<PhysicsBody> pm;
-    OrthographicCamera camera;
     SpriteBatch spriteBatch;
 
     public PhysicsDebugRenderingSystem() {
         super (Aspect.all(PhysicsBody.class));
         System.out.println("adding debug renderer");
         this.boxWorld = SlimeVolleyball.boxWorld;
-        camera = new OrthographicCamera(1000,1000);
         debugRenderer = new Box2DDebugRenderer();
         spriteBatch = new SpriteBatch();
     }
@@ -38,7 +36,7 @@ public class PhysicsDebugRenderingSystem extends EntityProcessingSystem {
         spriteBatch.begin();
         Gdx.gl.glClearColor(1,0,0,1);
      //   Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        debugRenderer.render(boxWorld, camera.combined);
+        debugRenderer.render(boxWorld, SlimeVolleyball.camera.combined);
         spriteBatch.end();
 
     }

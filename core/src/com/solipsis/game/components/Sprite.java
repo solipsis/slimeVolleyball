@@ -9,12 +9,17 @@ import com.badlogic.gdx.graphics.Texture;
 public class Sprite extends Component {
     public com.badlogic.gdx.graphics.g2d.Sprite sprite;
 
-    public Sprite() {
+    public int width;
+    public int height;
+    public Sprite(int width, int height) {
+        this.width = width;
+        this.height = height;
     }
 
     public void init(Texture texture) {
-        sprite = new com.badlogic.gdx.graphics.g2d.Sprite();
-        sprite.setTexture(texture);
+        sprite = new com.badlogic.gdx.graphics.g2d.Sprite(texture);
+        sprite.setSize(width, height);
+        sprite.setPosition(0,0);
 
          }
 }
