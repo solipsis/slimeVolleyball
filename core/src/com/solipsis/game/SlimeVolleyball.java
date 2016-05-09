@@ -93,19 +93,44 @@ public class SlimeVolleyball extends ApplicationAdapter {
 		BodyDef groundBodyDef =new BodyDef();
         // Set its world position3
 		groundBodyDef.position.set(new Vector2(50, 10));
-
         // Create a body from the defintion and add it to the world
 		Body groundBody = boxWorld.createBody(groundBodyDef);
-
         // Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-
         // (setAsBox takes half-width and half-height as arguments)
-		groundBox.setAsBox(25,3);
+		groundBox.setAsBox(40,3);
         // Create a fixture from our polygon shape and add it to our ground body
-		groundBody.createFixture(groundBox, 5);
+		groundBody.createFixture(groundBox, 0);
         // Clean up after ourselves
 		groundBox.dispose();
+
+        BodyDef groundBodyDef2 =new BodyDef();
+        // Set its world position3
+        groundBodyDef2.position.set(new Vector2(5, 10));
+        // Create a body from the defintion and add it to the world
+        Body groundBody2 = boxWorld.createBody(groundBodyDef2);
+        // Create a polygon shape
+        PolygonShape groundBox2 = new PolygonShape();
+        // (setAsBox takes half-width and half-height as arguments)
+        groundBox2.setAsBox(5,50);
+        // Create a fixture from our polygon shape and add it to our ground body
+        groundBody2.createFixture(groundBox2, 0);
+        // Clean up after ourselves
+        groundBox2.dispose();
+
+        BodyDef groundBodyDef3 =new BodyDef();
+        // Set its world position3
+        groundBodyDef3.position.set(new Vector2(90, 10));
+        // Create a body from the defintion and add it to the world
+        Body groundBody3 = boxWorld.createBody(groundBodyDef3);
+        // Create a polygon shape
+        PolygonShape groundBox3 = new PolygonShape();
+        // (setAsBox takes half-width and half-height as arguments)
+        groundBox3.setAsBox(5,50);
+        // Create a fixture from our polygon shape and add it to our ground body
+        groundBody3.createFixture(groundBox3, 0);
+        // Clean up after ourselves
+        groundBox3.dispose();
 
 
 	}

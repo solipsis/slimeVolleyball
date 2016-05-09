@@ -18,15 +18,17 @@ public class PhysicsBody extends Component {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(position);
+        bodyDef.fixedRotation = true;
         body = world.createBody(bodyDef);
 
 
         PolygonShape polygonShape = new PolygonShape();
         Vector2[] vertices = new Vector2[8];
         int radius = 10;
+        float outerVertexCount = vertices.length-2;
         vertices[0] =  new Vector2(0,0);
-        for (int i = 0; i < 7; i++) {
-            float angle = i / 6.0f * 180 * SlimeVolleyball.DEGTORAD;
+        for (int i = 0; i < vertices.length-1; i++) {
+            float angle = ((float)i / outerVertexCount) * 180 * SlimeVolleyball.DEGTORAD;
             System.out.println(angle);
             vertices[i+1] = new Vector2((float)(radius * Math.cos(angle)), (float)(radius * Math.sin(angle)));
         }
@@ -40,9 +42,9 @@ public class PhysicsBody extends Component {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = polygonShape;
-        fixtureDef.density = 1;
-        fixtureDef.restitution = 0.9f;
-        fixtureDef.friction = 0.5f;
+        fixtureDef.density = 5f;
+        fixtureDef.restitution = 0.1f;
+        fixtureDef.friction = 1f;
 
         Fixture fixture = body.createFixture(fixtureDef);
 
