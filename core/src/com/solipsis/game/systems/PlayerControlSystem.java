@@ -10,6 +10,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.solipsis.game.SlimeVolleyball;
@@ -29,6 +30,10 @@ public class PlayerControlSystem extends EntityProcessingSystem implements Input
 
     protected ComponentMapper<Position> positionMapper;
     protected ComponentMapper<PhysicsBody> bodyMapper;
+    protected ComponentMapper<PlayerControlled> playerControlledComponentMapper;
+
+    TouchInfo player1Info = new TouchInfo(new Vector2(0,0),0,-1);
+    TouchInfo player2Info = new TouchInfo(new Vector2(0,0),0,-1);
 
     Map<Entity, Boolean> tapMap = new HashMap<Entity, Boolean>();
 
@@ -37,12 +42,17 @@ public class PlayerControlSystem extends EntityProcessingSystem implements Input
     private World boxWorld = SlimeVolleyball.boxWorld;
 
     boolean test;
+    boolean p1Move;
+    boolean p2Move;
     float testX;
     float testY;
+    float p2MoveX;
+    float p2MoveY;
 
     public PlayerControlSystem() { super(Aspect.all(PlayerControlled.class, Position.class, PhysicsBody.class));
         System.out.println("added control system");
         Gdx.input.setInputProcessor(new GestureDetector(this));
+        Gdx.input.setInputProcessor(this);
         test = false;
     }
 
@@ -67,14 +77,58 @@ public class PlayerControlSystem extends EntityProcessingSystem implements Input
             position.x += 200 * Gdx.graphics.getDeltaTime();
         }
 
-        if (test) {
+        if (playerControlledComponentMapper.get(e).getPlayer() == 1 && bodyMapper.get(e).getBody().getPosition().y > 7) {
+            p1Move = false;
+        }
+
+        if (playerControlledComponentMapper.get(e).getPlayer() == 2 && bodyMapper.get(e).getBody().getPosition().y > 7) {
+            p2Move = false;
+        }
+
+        if (p1Move && playerControlledComponentMapper.get(e).getPlayer() == 1 && bodyMapper.get(e).getBody().getPosition().y < 7) {
             PhysicsBody body = bodyMapper.get(e);
             //body.getBody().applyForceToCenter(500,500, true);
             body.getBody().applyLinearImpulse(testX, testY, body.getBody().getPosition().x, body.getBody().getPosition().y, true);
-           // if (body.getBody().getLinearVelocity().x > 3000) {
-           //     body.getBody().setL
-          //  }
-            test = false;
+
+            int maxSlimeSpeed = 18;
+            if (body.getBody().getLinearVelocity().x > maxSlimeSpeed) {
+                body.getBody().setLinearVelocity(maxSlimeSpeed, body.getBody().getLinearVelocity().y);
+            }
+            if (body.getBody().getLinearVelocity().x < -maxSlimeSpeed) {
+                body.getBody().setLinearVelocity(-maxSlimeSpeed, body.getBody().getLinearVelocity().y);
+            }
+            if (body.getBody().getLinearVelocity().y > maxSlimeSpeed) {
+                body.getBody().setLinearVelocity( body.getBody().getLinearVelocity().x, maxSlimeSpeed);
+            }
+            if (body.getBody().getLinearVelocity().y < -maxSlimeSpeed) {
+                body.getBody().setLinearVelocity( body.getBody().getLinearVelocity().x, -maxSlimeSpeed);
+            }
+
+
+            p1Move = false;
+        }
+
+        if (p2Move && playerControlledComponentMapper.get(e).getPlayer() == 2 && bodyMapper.get(e).getBody().getPosition().y < 7) {
+            PhysicsBody body = bodyMapper.get(e);
+            //body.getBody().applyForceToCenter(500,500, true);
+            body.getBody().applyLinearImpulse(p2MoveX, p2MoveY, body.getBody().getPosition().x, body.getBody().getPosition().y, true);
+
+            int maxSlimeSpeed = 18;
+            if (body.getBody().getLinearVelocity().x > maxSlimeSpeed) {
+                body.getBody().setLinearVelocity(maxSlimeSpeed, body.getBody().getLinearVelocity().y);
+            }
+            if (body.getBody().getLinearVelocity().x < -maxSlimeSpeed) {
+                body.getBody().setLinearVelocity(-maxSlimeSpeed, body.getBody().getLinearVelocity().y);
+            }
+            if (body.getBody().getLinearVelocity().y > maxSlimeSpeed) {
+                body.getBody().setLinearVelocity( body.getBody().getLinearVelocity().x, maxSlimeSpeed);
+            }
+            if (body.getBody().getLinearVelocity().y < -maxSlimeSpeed) {
+                body.getBody().setLinearVelocity( body.getBody().getLinearVelocity().x, -maxSlimeSpeed);
+            }
+
+
+            p2Move = false;
         }
 
         if (position.x < 0) position.x = 0;
@@ -98,12 +152,49 @@ public class PlayerControlSystem extends EntityProcessingSystem implements Input
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
+        System.out.println("Touch down");
+
+        System.out.println("Width/2 : " + (SlimeVolleyball.camera.viewportWidth / 2));
+
+        Vector3 unprojected = SlimeVolleyball.camera.unproject(new Vector3(screenX, screenY, 0));
+        System.out.println("screenX: " + unprojected.x);
+        // player 1
+        if (unprojected.x < SlimeVolleyball.camera.viewportWidth / 2) {
+            System.out.println("updated p1");
+            player1Info = new TouchInfo(new Vector2(unprojected.x, unprojected.y), 1, pointer);
+        } else {
+            System.out.println("updated p2");
+            player2Info = new TouchInfo(new Vector2(unprojected.x, unprojected.y), 2, pointer);
+        }
+
+        return true;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
+        System.out.println("Touch up");
+        System.out.println("Pointer: " + pointer);
+        Vector3 unprojected = SlimeVolleyball.camera.unproject(new Vector3(screenX, screenY, 0));
+        if (player1Info.touchPointer == pointer) {
+            testX = (unprojected.x - player1Info.position.x) * 1000;
+            testY = (unprojected.y - player1Info.position.y) * 1000;
+            p1Move = true;
+            System.out.println("P1 touch up");
+            player1Info = new TouchInfo(new Vector2(0,0),0,-1);
+
+        }
+
+        if (player2Info.touchPointer == pointer) {
+            p2MoveX = (unprojected.x - player2Info.position.x) * 1000;
+            p2MoveY = (unprojected.y - player2Info.position.y) * 1000;
+            p2Move = true;
+            System.out.println("P2 touch up");
+            player2Info = new TouchInfo(new Vector2(0,0),0,-1);
+
+        }
+
+
+        return true;
     }
 
     @Override
@@ -142,16 +233,16 @@ public class PlayerControlSystem extends EntityProcessingSystem implements Input
     public boolean fling(float velocityX, float velocityY, int button) {
        // boxWorld.QueryAABB(12,);
         //eventList.put(null, )
-        System.out.println("FLLLLIIINNNNGGGG");
-        velocityX = velocityX * 5;
-        velocityY = velocityY * 5;
+    //    System.out.println("FLLLLIIINNNNGGGG");
+   //     velocityX = velocityX * 5;
+   //     velocityY = velocityY * 5;
 
-        testX = velocityX > 3000 ? 3000 : velocityX;
-        testY = velocityY > 3000 ? 3000 : velocityY;
+   //     testX = velocityX > 3000 ? 3000 : velocityX;
+    //    testY = velocityY > 3000 ? 3000 : velocityY;
 
-        test = true;
-        return true;
-
+   //     test = true;
+    //    return true;
+        return false;
     }
 
     @Override

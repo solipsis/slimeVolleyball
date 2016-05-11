@@ -3,6 +3,7 @@ package com.solipsis.game.systems;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
+import com.artemis.annotations.Wire;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,6 +17,7 @@ import com.solipsis.game.components.PhysicsBody;
 /**
  * Created by dave on 5/4/2016.
  */
+@Wire
 public class PhysicsDebugRenderingSystem extends EntityProcessingSystem {
 
     Box2DDebugRenderer debugRenderer;

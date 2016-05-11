@@ -17,10 +17,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.solipsis.game.components.*;
 import com.solipsis.game.managers.AssetManager;
-import com.solipsis.game.systems.PhysicsDebugRenderingSystem;
-import com.solipsis.game.systems.PhysicsSystem;
-import com.solipsis.game.systems.PlayerControlSystem;
-import com.solipsis.game.systems.RenderingSystem;
+import com.solipsis.game.systems.*;
 
 public class SlimeVolleyball extends ApplicationAdapter {
 
@@ -57,10 +54,12 @@ public class SlimeVolleyball extends ApplicationAdapter {
 				.setSystem(RenderingSystem.class)
 				.setSystem(PlayerControlSystem.class)
 				.setSystem(PhysicsDebugRenderingSystem.class)
-				.setSystem(PhysicsSystem.class);
+				.setSystem(PhysicsSystem.class)
+				.setSystem(BallSystem.class)
+				.setSystem(SlimeSystem.class);
 		world = new World(config);
 
-		int slime = world.create();
+	//	int slime = world.create();
 		/*
 			world.edit(slime)
 				.add(new Position(400,400))
@@ -70,35 +69,44 @@ public class SlimeVolleyball extends ApplicationAdapter {
 				.add(new SpriteReference(AssetManager.SpriteFile.SLIME));
 		*/
 
-        int slimeHeight = 10;
-        int slimeWidth = 10;
+        int slimeHeight = 7;
+        int slimeWidth = 7;
 
 
 		int ball = world.create();
 		world.edit(ball)
 				.add(new Position(50, 50))
-				.add(new PhysicsBody(boxWorld, new Vector2(50, 50), "a"));
+				.add(new PhysicsBody(boxWorld, new Vector2(50, 50), "a"))
+				.add(new Ball());
 
 
-
+		int slime = world.create();
+		world.edit(slime)
+				.add(new Position(20,6))
+				.add(new PlayerControlled(1))
+				.add(new PhysicsBody(boxWorld, new Vector2(20,6)))
+				.add(new Sprite(slimeWidth*2, slimeHeight*2))
+				.add(new Slime())
+				.add(new SpriteReference(AssetManager.SpriteFile.SLIME));
 
 		int slime2 = world.create();
 		world.edit(slime2)
 				.add(new Position(50,20))
-				.add(new PlayerControlled())
-				.add(new PhysicsBody(boxWorld, new Vector2(50,30)))
+				.add(new PlayerControlled(2))
+				.add(new PhysicsBody(boxWorld, new Vector2(70,6)))
 				.add(new Sprite(slimeWidth*2, slimeHeight*2))
+				.add(new Slime())
 				.add(new SpriteReference(AssetManager.SpriteFile.SLIME));
 
 		BodyDef groundBodyDef =new BodyDef();
         // Set its world position3
-		groundBodyDef.position.set(new Vector2(50, 10));
+		groundBodyDef.position.set(new Vector2(50, 1));
         // Create a body from the defintion and add it to the world
 		Body groundBody = boxWorld.createBody(groundBodyDef);
         // Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
         // (setAsBox takes half-width and half-height as arguments)
-		groundBox.setAsBox(40,3);
+		groundBox.setAsBox(47,3);
         // Create a fixture from our polygon shape and add it to our ground body
 		groundBody.createFixture(groundBox, 0);
         // Clean up after ourselves
@@ -106,13 +114,13 @@ public class SlimeVolleyball extends ApplicationAdapter {
 
         BodyDef groundBodyDef2 =new BodyDef();
         // Set its world position3
-        groundBodyDef2.position.set(new Vector2(5, 10));
+        groundBodyDef2.position.set(new Vector2(1, 0));
         // Create a body from the defintion and add it to the world
         Body groundBody2 = boxWorld.createBody(groundBodyDef2);
         // Create a polygon shape
         PolygonShape groundBox2 = new PolygonShape();
         // (setAsBox takes half-width and half-height as arguments)
-        groundBox2.setAsBox(5,50);
+        groundBox2.setAsBox(3,100);
         // Create a fixture from our polygon shape and add it to our ground body
         groundBody2.createFixture(groundBox2, 0);
         // Clean up after ourselves
@@ -120,17 +128,31 @@ public class SlimeVolleyball extends ApplicationAdapter {
 
         BodyDef groundBodyDef3 =new BodyDef();
         // Set its world position3
-        groundBodyDef3.position.set(new Vector2(90, 10));
+        groundBodyDef3.position.set(new Vector2(97, 10));
         // Create a body from the defintion and add it to the world
         Body groundBody3 = boxWorld.createBody(groundBodyDef3);
         // Create a polygon shape
         PolygonShape groundBox3 = new PolygonShape();
         // (setAsBox takes half-width and half-height as arguments)
-        groundBox3.setAsBox(5,50);
+        groundBox3.setAsBox(3,100);
         // Create a fixture from our polygon shape and add it to our ground body
         groundBody3.createFixture(groundBox3, 0);
         // Clean up after ourselves
         groundBox3.dispose();
+
+		BodyDef groundBodyDef4 =new BodyDef();
+		// Set its world position3
+		groundBodyDef4.position.set(new Vector2(50, 10));
+		// Create a body from the defintion and add it to the world
+		Body groundBody4 = boxWorld.createBody(groundBodyDef4);
+		// Create a polygon shape
+		PolygonShape groundBox4 = new PolygonShape();
+		// (setAsBox takes half-width and half-height as arguments)
+		groundBox4.setAsBox(0.5f,6);
+		// Create a fixture from our polygon shape and add it to our ground body
+		groundBody4.createFixture(groundBox4, 0);
+		// Clean up after ourselves
+		groundBox4.dispose();
 
 
 	}

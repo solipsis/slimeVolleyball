@@ -24,7 +24,7 @@ public class PhysicsBody extends Component {
 
         PolygonShape polygonShape = new PolygonShape();
         Vector2[] vertices = new Vector2[8];
-        int radius = 10;
+        int radius = 7;
         float outerVertexCount = vertices.length-2;
         vertices[0] =  new Vector2(0,0);
         for (int i = 0; i < vertices.length-1; i++) {
@@ -62,8 +62,8 @@ public class PhysicsBody extends Component {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circleShape;
-        fixtureDef.density = 1;
-        fixtureDef.restitution = 0.8f;
+        fixtureDef.density = 8;
+        fixtureDef.restitution = 0.7f;
         Fixture fixture = body.createFixture(fixtureDef);
 
 
